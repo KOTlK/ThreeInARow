@@ -24,9 +24,9 @@ namespace ThreeInARow.Session.Field.Nodes
             }
         }
 
-        public void Mark()
+        public void Mark(Color color)
         {
-            Color = Color.Red;
+            Color = color;
         }
     }
 }

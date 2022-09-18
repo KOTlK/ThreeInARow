@@ -1,4 +1,5 @@
-﻿using ThreeInARow.Input;
+﻿using Game.Runtime.Session;
+using ThreeInARow.Input;
 using ThreeInARow.Session.Factories;
 using ThreeInARow.Session.Field;
 using ThreeInARow.Session.Random;
@@ -13,23 +14,28 @@ namespace ThreeInARow.Application
         [SerializeField] private FieldInput _fieldInput;
         [SerializeField] private Vector2Int _fieldSize = new Vector2Int(10, 10);
         
-        private IFieldGraph _field;
+        private ISession _session;
 
         private void Awake()
         {
-            _field = new FieldFactory(
-                _fieldSize,
-                new RandomColor()
-            ).Create();
-            _field.Visualize(_fieldView);
+            _session = new Game.Runtime.Session.Session(
+                new FieldFactory(
+                    _fieldSize,
+                    new RandomColor()
+                ).Create()
+            );
+            
+            _session.Visualize(_fieldView);
 
-            var nodeInputs = _fieldView.GetComponentsInChildren<NodeClickInput>();
-            _fieldInput.Initialize(nodeInputs, _field);
         }
 
         private void Update()
         {
-            _field.Visualize(_fieldView);
+            if (_fieldInput.HasUnreadCommand)
+            {
+                _fieldInput.ReadCommand().Execute(_session);
+            }
+            _session.Visualize(_fieldView);
         }
     }
 }

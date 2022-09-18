@@ -5,6 +5,6 @@
         Color Color { get; }
         INode GetNeighbour(NodeSide side);
         void ResetNeighbours((NodeSide, INode)[] neighbours);
-        void Mark();//Debug
+        void Mark(Color color);
     }
 }

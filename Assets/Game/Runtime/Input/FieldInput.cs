@@ -1,27 +1,26 @@
 ﻿using ThreeInARow.Commands;
-using ThreeInARow.Session.Field;
+using ThreeInARow.Commands.Session;
+using ThreeInARow.Session.Field.ColorSelector;
 using UnityEngine;
 
 namespace ThreeInARow.Input
 {
-    public class FieldInput : MonoBehaviour
+    public class FieldInput : CommandQueue<ISessionCommand>
     {
-        private NodeClickInput[] _nodeInputs;
-        private IFieldGraph _field;
+        [SerializeField] private ClickInputs _nodeInputs;
+        [SerializeField] private Palette _palette;
 
-        public void Initialize(NodeClickInput[] inputs, IFieldGraph field)
+        private void Awake()
         {
-            _nodeInputs = inputs;
-            _field = field;
-            foreach (var input in _nodeInputs)
+            foreach (var input in _nodeInputs.Inputs)
             {
                 input.Clicked += OnNodeClick;
             }
         }
 
-        public void OnDestroy()
+        private void OnDestroy()
         {
-            foreach (var input in _nodeInputs)
+            foreach (var input in _nodeInputs.Inputs)
             {
                 input.Clicked -= OnNodeClick;
             }
@@ -29,7 +28,8 @@ namespace ThreeInARow.Input
 
         private void OnNodeClick(Vector2Int position)
         {
-            new TryMarkNodesCommand(position).Execute(_field);
+            PushCommand(new MarkNodeCommand(position, _palette.Current));
         }
+
     }
 }
